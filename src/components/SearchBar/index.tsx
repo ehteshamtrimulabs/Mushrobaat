@@ -1,6 +1,6 @@
-import Search from 'assets/icons/Search';
-import React from 'react';
-import styled from 'styled-components/native';
+import Search from "assets/icons/Search";
+import React from "react";
+import styled from "styled-components/native";
 
 interface Props {}
 
@@ -15,11 +15,12 @@ const Container = styled.View`
 const TextInput = styled.TextInput`
   border-bottom-width: 2px;
   border-bottom-color: #a59c9c;
-  color: #a59c9c;
+  color: black;
   font-size: 14px;
   font-weight: 600;
   width: 100%;
   margin-left: 10px;
+  padding-bottom: 4px;
 `;
 
 const SearchBar = (props: Props) => {

@@ -1,10 +1,10 @@
-import React from 'react';
-import {ImageSourcePropType} from 'react-native';
-import styled from 'styled-components/native';
+import React from "react";
+import { ImageSourcePropType } from "react-native";
+import styled from "styled-components/native";
 
 const TouchableOpacity = styled.TouchableOpacity`
   margin: 20px 20px 0px 20px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.2);
 `;
 
 const Container = styled.View`
@@ -39,10 +39,10 @@ const SubtitleText = styled.Text`
   color: #a59c9c;
 `;
 
-const CategoryBackground = styled.View`
+const CategoryBackground = styled.View<{ color: string }>`
   position: absolute;
   bottom: 0px;
-  background-color: #e4723c;
+  background-color: ${({ color }) => color};
   border-top-right-radius: 25px;
   height: 55px;
   width: 90px;
@@ -74,7 +74,7 @@ interface Props {
   image: ImageSourcePropType;
 }
 
-const DrinkItem = ({onPress, title, subtitle, category, image}: Props) => {
+const DrinkItem = ({ onPress, title, subtitle, category, image }: Props) => {
   return (
     <TouchableOpacity onPress={() => onPress()}>
       <Container>
@@ -83,7 +83,9 @@ const DrinkItem = ({onPress, title, subtitle, category, image}: Props) => {
             <TitleText>{title}</TitleText>
             <SubtitleText>{subtitle}</SubtitleText>
           </TextContainer>
-          <CategoryBackground>
+          <CategoryBackground
+            color={category === "Non Alcoholic" ? "#E4723C" : "#F5CA48"}
+          >
             <CategoryText>{category}</CategoryText>
           </CategoryBackground>
         </InfoContainer>

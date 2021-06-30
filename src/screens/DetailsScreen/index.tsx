@@ -1,19 +1,14 @@
-import React from 'react';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
-import {View, Text} from 'react-native';
-import {RootStackParamList} from 'navigations/AppNavigator';
-import {StackNavigationProp} from '@react-navigation/stack';
-import styled from 'styled-components/native';
-import Back from 'assets/icons/Back';
-import IngredientItem from 'components/IngredientItem';
-
-interface Props {}
-
-type DetailsScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  'Details'
->;
-type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
+import React, { useState } from "react";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { View, Modal } from "react-native";
+import { RootStackParamList } from "navigations/AppNavigator";
+import { StackNavigationProp } from "@react-navigation/stack";
+import styled from "styled-components/native";
+import Back from "assets/icons/Back";
+import IngredientItem from "components/IngredientItem";
+import LanguageBar from "components/LanguageBar";
+import Left from "assets/icons/Left";
+import Right from "assets/icons/Right";
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -35,6 +30,7 @@ const TitleText = styled.Text`
   font-size: 32px;
   margin-top: 5px;
   font-weight: 700;
+  min-height: 70px;
 `;
 
 const ServedInHeading = styled.Text`
@@ -81,27 +77,230 @@ const IngredientsContainer = styled.View`
   margin-top: 16px;
 `;
 
-const InstructionsButton = styled.TouchableOpacity`
-  background-color: #f5ca48;
-  width: 100%;
+const CategoriesList = styled.FlatList``;
+
+const ModalToggleButton = styled.TouchableOpacity<{
+  color: string;
+}>`
   height: 60px;
   border-radius: 50px;
   align-items: center;
   justify-content: center;
   margin-top: 20px;
+  margin: 20px 20px 0px 20px;
+  background-color: ${({ color }) => color};
 `;
 
-const InstructionsButtonText = styled.Text`
+const ModalToggleButtonText = styled.Text`
   font-size: 18px;
   font-weight: 700;
   color: black;
 `;
 
+const ModalSafeArea = styled.SafeAreaView`
+  flex: 1;
+`;
+
+const InactiveArea = styled.TouchableOpacity`
+  flex: 1;
+`;
+
+const ModalBackground = styled.View`
+  flex: 2.3;
+  padding: 0px 20px;
+`;
+
+const ModalContainer = styled.View`
+  flex: 1;
+  background-color: white;
+  border-width: 1px;
+  border-color: #f5ca48;
+  border-radius: 20px;
+  padding: 0px;
+`;
+
+const ModalHeadingText = styled.Text`
+  font-size: 32px;
+  font-weight: 700;
+  color: black;
+  align-self: center;
+  margin-top: 10px;
+`;
+
+const ModalSubHeadingText = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: #a59c9c;
+  align-self: center;
+`;
+
+const InstructionsContainer = styled.View`
+  flex-direction: row;
+`;
+
+const LeftContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+const RightContainer = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const InstructionsList = styled.FlatList`
+  margin-left: 10px;
+  margin-top: 10px;
+  flex: 8;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  height: 300px;
+`;
+
+const InstructionTextContainer = styled.View`
+  flex-direction: row;
+  margin-bottom: 20px;
+`;
+
+const InstructionText = styled.Text`
+  font-size: 18px;
+  font-weight: 400;
+  color: black;
+  margin: 10px 20px 10px 0px;
+`;
+
+interface Props {}
+
+type DetailsScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "Details"
+>;
+type DetailsScreenRouteProp = RouteProp<RootStackParamList, "Details">;
+
 const DetailsScreen = (props: Props) => {
   const navigation = useNavigation<DetailsScreenNavigationProp>();
-  const {params} = useRoute<DetailsScreenRouteProp>();
+  const { params } = useRoute<DetailsScreenRouteProp>();
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const languages = [
+    "Italy",
+    "Germany",
+    "UnitedKingdom",
+    "France",
+    "Spain",
+    "China",
+  ];
+
+  const [index, setIndex] = useState(2);
+  const [selectedLanguage, setSelectedLanguage] = useState(languages[2]);
+
+  const changeLanguage = () => {
+    setSelectedLanguage(languages[index]);
+  };
+
+  const goLeft = () => {
+    if (index === 0) setIndex(5);
+    else setIndex(index - 1);
+    changeLanguage();
+  };
+
+  const goRight = () => {
+    if (index === 5) setIndex(0);
+    else setIndex(index + 1);
+    changeLanguage();
+  };
+
+  const instructions = [
+    {
+      id: 1,
+      text: "Fill 14oz glass with ice and alcohol.",
+    },
+    {
+      id: 2,
+      text: "Fill 2/3 glass with cola and remainder with sweet & sour.",
+    },
+    {
+      id: 3,
+      text: "Top with dash of bitters and lemon wedge.",
+    },
+  ];
+
+  const ingredients = [
+    {
+      id: 1,
+      title: "Gin",
+      subtitle: "1/2 oz",
+      image: require("assets/Gin.png"),
+    },
+    {
+      id: 2,
+      title: "Light Rum",
+      subtitle: "1/2 oz",
+      image: require("assets/LightRum.png"),
+    },
+    {
+      id: 3,
+      title: "Tequila",
+      subtitle: "1/2 oz",
+      image: require("assets/Tequila.png"),
+    },
+  ];
+
   return (
     <Container>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        collapsable
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ModalSafeArea>
+          <InactiveArea onPress={() => setModalVisible(false)} />
+          <ModalBackground>
+            <ModalContainer>
+              <ModalHeadingText>Instructions</ModalHeadingText>
+              <ModalSubHeadingText>(ENGLISH)</ModalSubHeadingText>
+              <InstructionsContainer>
+                <LeftContainer>
+                  <Left
+                    onPress={() => {
+                      goLeft();
+                    }}
+                  />
+                </LeftContainer>
+                <InstructionsList
+                  data={instructions}
+                  renderItem={({ item }) => (
+                    <InstructionTextContainer>
+                      <InstructionText>{"\u2022"}</InstructionText>
+                      <InstructionText>{item.text}</InstructionText>
+                    </InstructionTextContainer>
+                  )}
+                />
+                <RightContainer>
+                  <Right onPress={() => goRight()} />
+                </RightContainer>
+              </InstructionsContainer>
+              <LanguageBar
+                selected={selectedLanguage}
+                onPress={(language) => setSelectedLanguage(language)}
+              />
+              <ModalToggleButton
+                onPress={() => setModalVisible(false)}
+                color={"#F26C68"}
+              >
+                <ModalToggleButtonText>CHEERS!</ModalToggleButtonText>
+              </ModalToggleButton>
+            </ModalContainer>
+          </ModalBackground>
+        </ModalSafeArea>
+      </Modal>
+
       <Content>
         <Box>
           <BackButton onPress={() => navigation.goBack()}>
@@ -111,18 +310,32 @@ const DetailsScreen = (props: Props) => {
             <TitleText>3-Mile Long Island Iced Tea</TitleText>
             <ServedInHeading>Served in:</ServedInHeading>
             <SubtitleText>Collins Glass</SubtitleText>
-            <DrinkPicture source={require('assets/drink.png')} />
+            <DrinkPicture source={require("assets/drink.png")} />
             <IngredientsHeading>Ingredients</IngredientsHeading>
-            <IngredientsContainer>
-              <IngredientItem />
-              <IngredientItem />
-              <IngredientItem />
-            </IngredientsContainer>
-            <InstructionsButton>
-              <InstructionsButtonText>See Instructions</InstructionsButtonText>
-            </InstructionsButton>
           </HeadingContainer>
         </Box>
+        <IngredientsContainer>
+          <CategoriesList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={ingredients}
+            renderItem={({ item }) => (
+              <IngredientItem
+                title={item.title}
+                subtitle={item.subtitle}
+                image={item.image}
+              />
+            )}
+            ListFooterComponent={<View style={{ padding: 10 }} />}
+          />
+        </IngredientsContainer>
+
+        <ModalToggleButton
+          onPress={() => setModalVisible(true)}
+          color={"#f5ca48"}
+        >
+          <ModalToggleButtonText>See Instructions</ModalToggleButtonText>
+        </ModalToggleButton>
       </Content>
     </Container>
   );
