@@ -6,7 +6,7 @@ interface Props {}
 
 const Container = styled.View`
   margin-top: 30px;
-  margin-right: 20px;
+  padding-right: 20px;
   height: 45px;
   width: 100%;
   flex-direction: row;
@@ -17,6 +17,8 @@ const TextInput = styled.TextInput`
   border-bottom-color: #a59c9c;
   color: black;
   font-size: 14px;
+  font-family: Montserrat;
+
   font-weight: 600;
   width: 100%;
   margin-left: 10px;

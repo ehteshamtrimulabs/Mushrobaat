@@ -9,6 +9,7 @@ import China from "assets/flags/China";
 
 interface Props {
   selected: string;
+  onPress: (country: string) => void;
 }
 
 const Container = styled.View`
