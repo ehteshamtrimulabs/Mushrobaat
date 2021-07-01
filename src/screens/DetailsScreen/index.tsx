@@ -196,18 +196,11 @@ const DetailsScreen = (props: Props) => {
   const navigation = useNavigation<DetailsScreenNavigationProp>();
   const { params } = useRoute<DetailsScreenRouteProp>();
 
-  const languages = [
-    "Italy",
-    "Germany",
-    "UnitedKingdom",
-    "France",
-    "Spain",
-    "China",
-  ];
+  const languages = ["Italy", "Germany", "UnitedKingdom", "France", "Spain"];
 
   const [modalVisible, setModalVisible] = useState(false);
   const [index, setIndex] = useState(2);
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[2]);
+  var selectedLanguage = languages[index];
   const [drink, setDrink] = useState({
     strGlass: "Collins Glass",
     strDrink: "3 Wise Men",
@@ -216,17 +209,17 @@ const DetailsScreen = (props: Props) => {
   });
 
   const changeLanguage = () => {
-    setSelectedLanguage(languages[index]);
+    selectedLanguage = languages[index];
   };
 
   const goLeft = () => {
-    if (index === 0) setIndex(5);
+    if (index === 0) setIndex(4);
     else setIndex(index - 1);
     changeLanguage();
   };
 
   const goRight = () => {
-    if (index === 5) setIndex(0);
+    if (index === 4) setIndex(0);
     else setIndex(index + 1);
 
     changeLanguage();
@@ -306,10 +299,7 @@ const DetailsScreen = (props: Props) => {
                   <Right />
                 </SideButtonContainer>
               </InstructionsContainer>
-              <LanguageBar
-                selected={selectedLanguage}
-                onPress={(language) => setSelectedLanguage(language)}
-              />
+              <LanguageBar selected={selectedLanguage} />
               <ModalToggleButton
                 onPress={() => setModalVisible(false)}
                 color={"#F26C68"}

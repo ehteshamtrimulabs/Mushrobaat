@@ -37,6 +37,7 @@ const TitleText = styled.Text`
 const SubtitleText = styled.Text`
   font-size: 14px;
   font-family: Montserrat;
+  margin-top: 10px;
 
   font-weight: 500;
   color: #a59c9c;

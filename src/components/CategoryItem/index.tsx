@@ -25,12 +25,12 @@ const Image = styled.Image`
 const Title = styled.Text`
   font-size: 14px;
   font-family: Montserrat;
-
   font-weight: 600;
   color: #313234;
   width: 80px;
   margin-top: 10px;
   text-align: center;
+  max-height: 50px;
 `;
 
 const Icon = styled.View<{ color: string }>`

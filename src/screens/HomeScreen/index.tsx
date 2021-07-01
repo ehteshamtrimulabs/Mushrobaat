@@ -193,24 +193,54 @@ const HomeScreen = () => {
         "https://www.thecocktaildb.com/images/media/drink/ssxvww1472669166.jpg",
       idDrink: "17831",
     },
-    // {
-    //   strDrink: "A True Amaretto Sour",
-    //   strDrinkThumb:
-    //     "https://www.thecocktaildb.com/images/media/drink/rptuxy1472669372.jpg",
-    //   idDrink: "17005",
-    // },
-    // {
-    //   strDrink: "Arctic Mouthwash",
-    //   strDrinkThumb:
-    //     "https://www.thecocktaildb.com/images/media/drink/wqstwv1478963735.jpg",
-    //   idDrink: "17118",
-    // },
-    // {
-    //   strDrink: "Absolutly Screwed Up",
-    //   strDrinkThumb:
-    //     "https://www.thecocktaildb.com/images/media/drink/yvxrwv1472669728.jpg",
-    //   idDrink: "16134",
-    // },
+    {
+      strDrink: "A True Amaretto Sour",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/rptuxy1472669372.jpg",
+      idDrink: "17005",
+    },
+    {
+      strDrink: "Arctic Mouthwash",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/wqstwv1478963735.jpg",
+      idDrink: "17118",
+    },
+    {
+      strDrink: "Absolutly Screwed Up",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/yvxrwv1472669728.jpg",
+      idDrink: "16134",
+    },
+    {
+      strDrink: "3 Wise Men",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/wxqpyw1468877677.jpg",
+      idDrink: "138299",
+    },
+    {
+      strDrink: "A Furlong Too Late",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/ssxvww1472669166.jpg",
+      idDrink: "1723831",
+    },
+    {
+      strDrink: "A True Amaretto Sour",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/rptuxy1472669372.jpg",
+      idDrink: "174005",
+    },
+    {
+      strDrink: "Arctic Mouthwash",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/wqstwv1478963735.jpg",
+      idDrink: "171418",
+    },
+    {
+      strDrink: "Absolutly Screwed Up",
+      strDrinkThumb:
+        "https://www.thecocktaildb.com/images/media/drink/yvxrwv1472669728.jpg",
+      idDrink: "164134",
+    },
   ]);
 
   const [categories, setCategories] = useState([
@@ -324,6 +354,7 @@ const HomeScreen = () => {
           data={drinks}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.idDrink}
+          ListFooterComponent={<View />}
           // initialNumToRender={100}
           renderItem={({ item }) => (
             <DrinkItem

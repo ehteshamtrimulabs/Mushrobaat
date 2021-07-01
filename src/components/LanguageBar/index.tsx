@@ -5,11 +5,9 @@ import Spain from "assets/flags/Spain";
 import Germany from "assets/flags/Germany";
 import France from "assets/flags/France";
 import UnitedKindom from "assets/flags/UnitedKingdom";
-import China from "assets/flags/China";
 
 interface Props {
   selected: string;
-  onPress: (country: string) => void;
 }
 
 const Container = styled.View`
@@ -20,48 +18,33 @@ const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 `;
 
-const LanguageBar = ({ selected, onPress }: Props) => {
+const LanguageBar = ({ selected }: Props) => {
   const selectedProps = {
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
     opacity: 1,
   };
 
   const unSelectedProps = {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
     opacity: 0.65,
   };
 
   return (
     <Container>
-      <Italy
-        {...(selected === "Italy" ? selectedProps : unSelectedProps)}
-        onPress={() => onPress("Italy")}
-      />
+      <Italy {...(selected === "Italy" ? selectedProps : unSelectedProps)} />
       <Germany
         {...(selected === "Germany" ? selectedProps : unSelectedProps)}
-        onPress={() => onPress("Germany")}
       />
       <UnitedKindom
         {...(selected === "UnitedKingdom" ? selectedProps : unSelectedProps)}
-        onPress={() => onPress("UnitedKingdom")}
       />
-      <France
-        {...(selected === "France" ? selectedProps : unSelectedProps)}
-        onPress={() => onPress("France")}
-      />
-      <Spain
-        {...(selected === "Spain" ? selectedProps : unSelectedProps)}
-        onPress={() => onPress("Spain")}
-      />
-      <China
-        {...(selected === "China" ? selectedProps : unSelectedProps)}
-        onPress={() => onPress("China")}
-      />
+      <France {...(selected === "France" ? selectedProps : unSelectedProps)} />
+      <Spain {...(selected === "Spain" ? selectedProps : unSelectedProps)} />
     </Container>
   );
 };
