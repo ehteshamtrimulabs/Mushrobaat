@@ -1,6 +1,16 @@
 import React from "react";
 import styled from "styled-components/native";
-import { ImageSourcePropType } from "react-native";
+
+const Container = styled.TouchableOpacity`
+  width: 100px;
+  height: 160px;
+  margin-left: 20px;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 4px;
+  justify-content: space-between;
+`;
 
 const Image = styled.Image`
   width: 80px;
@@ -25,28 +35,22 @@ const Subtitle = styled.Text`
   font-weight: 500;
   color: #a59c9c;
   align-self: center;
-`;
-
-const Container = styled.TouchableOpacity`
-  width: 100px;
-  height: 130px;
-  margin-left: 20px;
-  border-radius: 15px;
-  background-color: white;
-  box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 4px;
+  padding-bottom: 10px;
 `;
 
 interface Props {
   title: string;
   subtitle: string;
-  image: ImageSourcePropType;
 }
 
-const IngredientItem = ({ image, title, subtitle }: Props) => {
+const IngredientItem = ({ title, subtitle }: Props) => {
   return (
     <Container>
-      <Image source={image} />
+      <Image
+        source={{
+          uri: `https://www.thecocktaildb.com/images/ingredients/${title}-Medium.png`,
+        }}
+      />
       <Title>{title}</Title>
       <Subtitle>{subtitle}</Subtitle>
     </Container>

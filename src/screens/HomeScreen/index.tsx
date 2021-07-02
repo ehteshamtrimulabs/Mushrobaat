@@ -7,7 +7,7 @@ import ProfilePicture from "components/ProfilePicture";
 import SearchBar from "components/SearchBar";
 import SortModalListItem from "components/SortModalListItem";
 import { RootStackParamList } from "navigations/AppNavigator";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Modal } from "react-native";
 import styled from "styled-components/native";
@@ -18,16 +18,11 @@ const Container = styled.SafeAreaView<{ color: string; opacity?: number }>`
   opacity: ${({ opacity }) => (opacity ? opacity : 1)};
 `;
 
-const Content = styled.View<{ color: string; opacity?: number }>`
-  flex: 1;
-  margin-top: 0px;
-  background-color: ${({ color }) => color};
-  opacity: ${({ opacity }) => (opacity ? opacity : 1)};
+const TopContainer = styled.View`
+  height: 60%;
 `;
-
 const Box = styled.View`
   flex: 1;
-  justify-content: flex-start;
   padding: 0px 20px;
 `;
 
@@ -37,6 +32,7 @@ const TopBar = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin-top: 10px;
 `;
 
 const Heading = styled.View`
@@ -59,7 +55,8 @@ const HeadingText2 = styled.Text`
 const TouchableOpacity = styled.TouchableOpacity``;
 
 const CategoriesHeading = styled.Text`
-  margin-top: 30px;
+  margin-top: 20px;
+  margin-bottom: 10px;
   font-weight: 700;
   font-size: 16px;
   font-family: Montserrat;
@@ -68,14 +65,11 @@ const CategoriesHeading = styled.Text`
 const CategoriesView = styled.View`
   align-items: center;
   justify-content: center;
-  margin-top: 15px;
-  flex-grow: 0;
 `;
 
 const CategoriesList = styled.FlatList``;
 
 const ListView = styled.FlatList`
-  flex-grow: 0;
   padding-top: 10px;
 `;
 
@@ -136,6 +130,37 @@ const HomeScreen = () => {
   const { params } = useRoute<HomeScreenRouteProp>();
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [drinks, setDrinks] = useState([]);
+  const [categories, setCategories] = useState([
+    {
+      id: 1,
+      category: "Alcoholic",
+      categoryString: "Alcoholic",
+
+      image: require("assets/Ordinary.png"),
+      selected: true,
+    },
+    {
+      id: 2,
+      category: "Non Alcoholic",
+      categoryString: "Non_Alcoholic",
+      image: require("assets/Coffee.png"),
+      selected: false,
+    },
+    {
+      id: 3,
+      category: "Optional Alcohol",
+      categoryString: "Optional_Alcohol",
+
+      image: require("assets/SoftDrink.png"),
+      selected: false,
+    },
+  ]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchDrinks("Alcoholic");
+  }, []);
 
   const [sortBy, setSortBy] = useState({
     latest: true,
@@ -180,91 +205,38 @@ const HomeScreen = () => {
     });
   };
 
-  const [drinks, setDrinks] = useState([
-    {
-      strDrink: "3 Wise Men",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/wxqpyw1468877677.jpg",
-      idDrink: "13899",
-    },
-    {
-      strDrink: "A Furlong Too Late",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/ssxvww1472669166.jpg",
-      idDrink: "17831",
-    },
-    {
-      strDrink: "A True Amaretto Sour",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/rptuxy1472669372.jpg",
-      idDrink: "17005",
-    },
-    {
-      strDrink: "Arctic Mouthwash",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/wqstwv1478963735.jpg",
-      idDrink: "17118",
-    },
-    {
-      strDrink: "Absolutly Screwed Up",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/yvxrwv1472669728.jpg",
-      idDrink: "16134",
-    },
-    {
-      strDrink: "3 Wise Men",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/wxqpyw1468877677.jpg",
-      idDrink: "138299",
-    },
-    {
-      strDrink: "A Furlong Too Late",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/ssxvww1472669166.jpg",
-      idDrink: "1723831",
-    },
-    {
-      strDrink: "A True Amaretto Sour",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/rptuxy1472669372.jpg",
-      idDrink: "174005",
-    },
-    {
-      strDrink: "Arctic Mouthwash",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/wqstwv1478963735.jpg",
-      idDrink: "171418",
-    },
-    {
-      strDrink: "Absolutly Screwed Up",
-      strDrinkThumb:
-        "https://www.thecocktaildb.com/images/media/drink/yvxrwv1472669728.jpg",
-      idDrink: "164134",
-    },
-  ]);
+  const changeCategory = (cat: string) => {
+    let index = categories.findIndex((element) => element.selected === true);
+    let newArray = [...categories];
+    newArray[index] = { ...newArray[index], selected: false };
 
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      category: "Ordinary Drink",
-      image: require("assets/Ordinary.png"),
-      selected: true,
-    },
-    {
-      id: 2,
-      category: "Coffee / Tea",
-      image: require("assets/Coffee.png"),
-      selected: false,
-    },
-    {
-      id: 3,
-      category: "Soft Drink / Soda",
-      image: require("assets/SoftDrink.png"),
-      selected: false,
-    },
-  ]);
+    index = categories.findIndex((element) => element.category === cat);
 
-  const selectedCategory = "Alcoholic";
+    newArray[index] = { ...newArray[index], selected: true };
+
+    setCategories([...newArray]);
+    fetchDrinks(newArray[index].categoryString);
+  };
+
+  const fetchSearchResults = (text: string) => {
+    setLoading(true);
+    fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${text}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setDrinks(data.drinks);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const fetchDrinks = async (cat: string) => {
+    setLoading(true);
+    fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=${cat}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setDrinks(data.drinks);
+      })
+      .finally(() => setLoading(false));
+  };
 
   return (
     <Container
@@ -310,63 +282,61 @@ const HomeScreen = () => {
           </ModalContainer>
         </ModalSafeArea>
       </Modal>
-      <Content
-        opacity={modalVisible ? 0.7 : 1}
-        color={modalVisible ? "rgba(0,0,0,0.5)" : "#F9F9FB"}
-      >
+
+      <TopContainer>
+        <Box>
+          <TopBar>
+            <TouchableOpacity onPress={() => navigate("Profile")}>
+              <ProfilePicture image={require("assets/profile.png")} />
+            </TouchableOpacity>
+            <MenuButton onPress={() => setModalVisible(!modalVisible)}>
+              <Menu />
+            </MenuButton>
+          </TopBar>
+          <Heading>
+            <HeadingText1>Beverages</HeadingText1>
+            <HeadingText2>Mushrobaat</HeadingText2>
+          </Heading>
+          <SearchBar onSubmit={(text) => fetchSearchResults(text)} />
+          <CategoriesHeading>Categories</CategoriesHeading>
+        </Box>
+        <CategoriesView>
+          <CategoriesList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={categories}
+            renderItem={({ item }) => (
+              <CategoryItem
+                category={item.category}
+                selected={item.selected}
+                image={item.image}
+                onPress={() => changeCategory(item.category)}
+              />
+            )}
+            ListFooterComponent={<View />}
+          />
+        </CategoriesView>
+      </TopContainer>
+      {loading ? (
+        <View></View>
+      ) : (
         <ListView
-          bounces={false}
-          ListHeaderComponent={
-            <>
-              <Box>
-                <TopBar>
-                  <TouchableOpacity onPress={() => navigate("Profile")}>
-                    <ProfilePicture image={require("assets/profile.png")} />
-                  </TouchableOpacity>
-                  <MenuButton onPress={() => setModalVisible(!modalVisible)}>
-                    <Menu />
-                  </MenuButton>
-                </TopBar>
-                <Heading>
-                  <HeadingText1>Beverages</HeadingText1>
-                  <HeadingText2>Mushrobaat</HeadingText2>
-                </Heading>
-                <SearchBar />
-                <CategoriesHeading>Categories</CategoriesHeading>
-              </Box>
-              <CategoriesView>
-                <CategoriesList
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  data={categories}
-                  renderItem={({ item }) => (
-                    <CategoryItem
-                      category={item.category}
-                      selected={item.selected}
-                      image={item.image}
-                    />
-                  )}
-                  ListFooterComponent={<View />}
-                />
-              </CategoriesView>
-            </>
-          }
           data={drinks}
+          disableVirtualization
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.idDrink}
           ListFooterComponent={<View />}
-          // initialNumToRender={100}
           renderItem={({ item }) => (
             <DrinkItem
               onPress={() => navigate("Details", { drinkId: item.idDrink })}
               title={item.strDrink}
               subtitle={"Collins Glass"}
-              category={selectedCategory}
+              category={"Alcoholic"}
               image={`${item.strDrinkThumb}/preview`}
             />
           )}
         />
-      </Content>
+      )}
     </Container>
   );
 };

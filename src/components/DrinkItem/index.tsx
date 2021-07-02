@@ -24,7 +24,9 @@ const InfoContainer = styled.View`
 const TextContainer = styled.View`
   width: 125px;
   margin-left: 20px;
-  margin-top: 30px;
+  margin-top: 20px;
+  padding-top: 10px;
+  justify-content: space-between;
 `;
 
 const TitleText = styled.Text`
@@ -32,15 +34,15 @@ const TitleText = styled.Text`
   font-size: 14px;
   font-weight: 600;
   font-family: Montserrat;
+  max-height: 70px;
 `;
 
 const SubtitleText = styled.Text`
   font-size: 14px;
   font-family: Montserrat;
-  margin-top: 10px;
-
   font-weight: 500;
   color: #a59c9c;
+  margin-top: 10px;
 `;
 
 const CategoryBackground = styled.View<{ color: string }>`

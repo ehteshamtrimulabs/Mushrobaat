@@ -10,6 +10,7 @@ const Container = styled.SafeAreaView`
   flex: 1;
   margin-top: 20px;
 `;
+
 const Content = styled.ScrollView`
   flex: 1;
 `;
@@ -26,14 +27,6 @@ const HeadingContainer = styled.View`
   margin-bottom: 30px;
 `;
 
-const TitleText = styled.Text`
-  font-size: 32px;
-  margin-top: 5px;
-  font-weight: 700;
-  min-height: 70px;
-  font-family: Montserrat;
-`;
-
 const BackButton = styled.TouchableOpacity`
   height: 40px;
   width: 40px;
@@ -42,6 +35,14 @@ const BackButton = styled.TouchableOpacity`
   border-radius: 10px;
   align-items: center;
   justify-content: center;
+`;
+
+const TitleText = styled.Text`
+  font-size: 32px;
+  margin-top: 5px;
+  font-weight: 700;
+  min-height: 70px;
+  font-family: Montserrat;
 `;
 
 const EditButtonContainer = styled.TouchableOpacity`

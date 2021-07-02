@@ -1,6 +1,6 @@
-import React from 'react';
-import {ImageSourcePropType, ImageStyle, StyleProp} from 'react-native';
-import styled from 'styled-components/native';
+import React from "react";
+import { ImageSourcePropType, ImageStyle, StyleProp } from "react-native";
+import styled from "styled-components/native";
 
 interface Props {
   image: ImageSourcePropType;
@@ -13,7 +13,7 @@ const Profile = styled.Image`
   border-radius: 20px;
 `;
 
-const ProfilePicture = ({image, style}: Props) => (
+const ProfilePicture = ({ image, style }: Props) => (
   <Profile source={image} style={style} />
 );
 

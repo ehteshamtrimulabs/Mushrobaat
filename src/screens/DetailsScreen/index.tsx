@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { View, Modal } from "react-native";
 import { RootStackParamList } from "navigations/AppNavigator";
@@ -9,6 +9,8 @@ import IngredientItem from "components/IngredientItem";
 import LanguageBar from "components/LanguageBar";
 import Left from "assets/icons/Left";
 import Right from "assets/icons/Right";
+
+
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -41,7 +43,6 @@ const TitleText = styled.Text`
 const ServedInHeading = styled.Text`
   font-size: 14px;
   font-family: Montserrat;
-
   margin-top: 10px;
   color: #a59c9c;
 `;
@@ -52,7 +53,6 @@ const SubtitleText = styled.Text`
   font-family: Montserrat;
 
   font-weight: 600;
-  margin-top: 10px;
 `;
 
 const BackButton = styled.TouchableOpacity`
@@ -95,8 +95,7 @@ const ModalToggleButton = styled.TouchableOpacity<{ color: string }>`
   border-radius: 50px;
   align-items: center;
   justify-content: center;
-  margin-top: 20px;
-  margin: 20px 20px 0px 20px;
+  margin: 10px 20px 0px 20px;
   background-color: ${({ color }) => color};
 `;
 
@@ -196,70 +195,83 @@ const DetailsScreen = (props: Props) => {
   const navigation = useNavigation<DetailsScreenNavigationProp>();
   const { params } = useRoute<DetailsScreenRouteProp>();
 
-  const languages = ["Italy", "Germany", "UnitedKingdom", "France", "Spain"];
 
   const [modalVisible, setModalVisible] = useState(false);
   const [index, setIndex] = useState(2);
-  var selectedLanguage = languages[index];
-  const [drink, setDrink] = useState({
-    strGlass: "Collins Glass",
-    strDrink: "3 Wise Men",
-    strDrinkThumb:
-      "https://www.thecocktaildb.com/images/media/drink/wxqpyw1468877677.jpg",
-  });
+  const [drink, setDrink] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [instructions, setInstructions] = useState({});
+  const [ingredients, setIngredients] = useState([]);
 
-  const changeLanguage = () => {
+  useEffect(() => {
+    fetchDrink();
+  }, []);
+
+  const languages = ["it", "de", "en", "fr", "es"];
+  var selectedLanguage = languages[index];
+  var ingredientlist: { ingredient: any; id: number; measure: any }[] = [];
+
+  const fetchDrink = async () => {
+
+    setLoading(true);
+    fetch(
+      `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${params.drinkId}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setDrink(data.drinks[0]);
+        changeIngredients(data.drinks[0]);
+        changeInstructions(data.drinks[0]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const changeIngredients = (drink) => {
+    for (let i = 1; i < 15; i++) {
+      let ingredient = {
+        ingredient: drink[`strIngredient${i}`],
+        id: i,
+        measure: drink[`strMeasure${i}`],
+      };
+      ingredientlist.push(ingredient);
+    }
+    setIngredients([...ingredientlist]);
+  };
+
+  const changeLanguage = (lang) => {
+    
+    if(lang==='')
     selectedLanguage = languages[index];
+    else{
+      setIndex(languages.findIndex((element)=>{
+        return (element===lang)
+      }))
+      changeLanguage('');
+    }
+  };
+
+  const changeInstructions = (drink) => {
+    let instr = { en: [], de: [], it: [],fr:[],es:[]};
+    instr.en = drink.strInstructions.match(/[^\.!\?]+[\.!\?]+/g);
+    instr.de = drink.strInstructionsDE.match(/[^\.!\?]+[\.!\?]+/g);
+    instr.it = drink.strInstructionsIT.match(/[^\.!\?]+[\.!\?]+/g);
+    setInstructions({ ...instr });
   };
 
   const goLeft = () => {
     if (index === 0) setIndex(4);
     else setIndex(index - 1);
-    changeLanguage();
+    changeLanguage('');
   };
 
   const goRight = () => {
     if (index === 4) setIndex(0);
     else setIndex(index + 1);
 
-    changeLanguage();
+    changeLanguage('');
   };
-
-  const instructions = [
-    {
-      id: 1,
-      text: "Fill 14oz glass with ice and alcohol.",
-    },
-    {
-      id: 2,
-      text: "Fill 2/3 glass with cola and remainder with sweet & sour.",
-    },
-    {
-      id: 3,
-      text: "Top with dash of bitters and lemon wedge.",
-    },
-  ];
-
-  const ingredients = [
-    {
-      id: 1,
-      title: "Gin",
-      subtitle: "1/2 oz",
-      image: require("assets/Gin.png"),
-    },
-    {
-      id: 2,
-      title: "Light Rum",
-      subtitle: "1/2 oz",
-      image: require("assets/LightRum.png"),
-    },
-    {
-      id: 3,
-      title: "Tequila",
-      subtitle: "1/2 oz",
-      image: require("assets/Tequila.png"),
-    },
-  ];
 
   return (
     <Container>
@@ -277,7 +289,15 @@ const DetailsScreen = (props: Props) => {
           <ModalBackground>
             <ModalContainer>
               <ModalHeadingText>Instructions</ModalHeadingText>
-              <ModalSubHeadingText>(ENGLISH)</ModalSubHeadingText>
+              <ModalSubHeadingText>{
+                selectedLanguage==='en'&&'ENGLISH'}
+                {selectedLanguage==='es'&&'SPANISH'}
+                {selectedLanguage==='it'&&'ITALIAN'}
+                {selectedLanguage==='de'&&'GERMAN'}
+                {selectedLanguage==='fr'&&'FRENCH'}
+                
+
+                </ModalSubHeadingText>
               <InstructionsContainer>
                 <SideButtonContainer
                   onPress={() => {
@@ -287,19 +307,21 @@ const DetailsScreen = (props: Props) => {
                   <Left />
                 </SideButtonContainer>
                 <InstructionsList
-                  data={instructions}
-                  renderItem={({ item }) => (
+                  data={instructions.[selectedLanguage]}
+                  keyExtractor={(index)=>index.toString()}
+                  renderItem={({ item }) =>{
+                  return(
                     <InstructionTextContainer>
                       <InstructionText>{"\u2022"}</InstructionText>
-                      <InstructionText>{item.text}</InstructionText>
+                      <InstructionText>{item}</InstructionText>
                     </InstructionTextContainer>
-                  )}
+                  )}}
                 />
                 <SideButtonContainer onPress={() => goRight()}>
                   <Right />
                 </SideButtonContainer>
               </InstructionsContainer>
-              <LanguageBar selected={selectedLanguage} />
+              <LanguageBar selected={selectedLanguage} onChangeLanguage={(lang:string)=>changeLanguage(lang)}/>
               <ModalToggleButton
                 onPress={() => setModalVisible(false)}
                 color={"#F26C68"}
@@ -312,48 +334,53 @@ const DetailsScreen = (props: Props) => {
           </ModalBackground>
         </ModalSafeArea>
       </Modal>
-
-      <Content
-        opacity={modalVisible ? 0.7 : 1}
-        color={modalVisible ? "rgba(0,0,0,0.5)" : "#F9F9FB"}
-      >
-        <Box>
-          <BackButton onPress={() => navigation.goBack()}>
-            <Back />
-          </BackButton>
-          <HeadingContainer>
-            <TitleText>{drink.strDrink}</TitleText>
-            <ServedInHeading>Served in:</ServedInHeading>
-            <SubtitleText>{drink.strGlass}</SubtitleText>
-            <DrinkPicture source={{ uri: drink.strDrinkThumb }} />
-            <IngredientsHeading>Ingredients</IngredientsHeading>
-          </HeadingContainer>
-        </Box>
-        <IngredientsContainer>
-          <CategoriesList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={ingredients}
-            renderItem={({ item }) => (
-              <IngredientItem
-                title={item.title}
-                subtitle={item.subtitle}
-                image={item.image}
-              />
-            )}
-            ListFooterComponent={<View style={{ padding: 10 }} />}
-          />
-        </IngredientsContainer>
-
-        <ModalToggleButton
-          onPress={() => setModalVisible(true)}
-          color={"#f5ca48"}
+      {loading ? (
+        <Box />
+      ) : (
+        <Content
+          opacity={modalVisible ? 0.7 : 1}
+          color={modalVisible ? "rgba(0,0,0,0.5)" : "#F9F9FB"}
         >
-          <ModalToggleButtonText color="black">
-            See Instructions
-          </ModalToggleButtonText>
-        </ModalToggleButton>
-      </Content>
+          <Box>
+            <BackButton onPress={() => navigation.goBack()}>
+              <Back />
+            </BackButton>
+            <HeadingContainer>
+              <TitleText>{drink.strDrink}</TitleText>
+              <ServedInHeading>Served in:</ServedInHeading>
+              <SubtitleText>{drink.strGlass}</SubtitleText>
+              <DrinkPicture source={{ uri: drink.strDrinkThumb }} />
+              <IngredientsHeading>Ingredients</IngredientsHeading>
+            </HeadingContainer>
+          </Box>
+          <IngredientsContainer>
+            <CategoriesList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={ingredients}
+              renderItem={({ item }) => {
+                if (item.ingredient === null) return null;
+                return (
+                  <IngredientItem
+                    title={item.ingredient}
+                    subtitle={item.measure}
+                  />
+                );
+              }}
+              ListFooterComponent={<View style={{ padding: 10 }} />}
+            />
+          </IngredientsContainer>
+
+          <ModalToggleButton
+            onPress={() => setModalVisible(true)}
+            color={"#f5ca48"}
+          >
+            <ModalToggleButtonText color="black">
+              See Instructions
+            </ModalToggleButtonText>
+          </ModalToggleButton>
+        </Content>
+      )}
     </Container>
   );
 };

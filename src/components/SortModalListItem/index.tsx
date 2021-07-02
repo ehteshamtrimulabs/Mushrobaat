@@ -2,12 +2,6 @@ import Checked from "assets/icons/Checked";
 import React from "react";
 import styled from "styled-components/native";
 
-interface Props {
-  text: string;
-  onPress: () => void;
-  checked: boolean;
-}
-
 const Container = styled.TouchableOpacity`
   margin-bottom: 10px;
   width: 100%;
@@ -22,6 +16,12 @@ const Text = styled.Text`
   color: black;
   font-family: Montserrat;
 `;
+
+interface Props {
+  text: string;
+  onPress: () => void;
+  checked: boolean;
+}
 
 const SortModalListItem = ({ text, onPress, checked }: Props) => (
   <Container onPress={() => onPress()}>
