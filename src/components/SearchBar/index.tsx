@@ -18,16 +18,25 @@ const TextInput = styled.TextInput`
   font-size: 14px;
   font-family: Montserrat;
   font-weight: 600;
-  width: 100%;
+  flex: 1;
   margin-left: 10px;
   padding-bottom: 4px;
 `;
 
+const CancelButton = styled.TouchableOpacity``;
+
+const Text = styled.Text`
+  font-size: 14px;
+  font-family: Montserrat;
+  font-weight: 400;
+`;
+
 interface Props {
   onSubmit: (text: string) => void;
+  onCancel: () => void;
 }
 
-const SearchBar = ({ onSubmit }: Props) => {
+const SearchBar = ({ onSubmit, onCancel }: Props) => {
   const [searchText, setSearchText] = useState("");
 
   return (
@@ -42,6 +51,16 @@ const SearchBar = ({ onSubmit }: Props) => {
         enablesReturnKeyAutomatically
         onSubmitEditing={() => onSubmit(searchText)}
       />
+      {searchText.length > 0 && (
+        <CancelButton
+          onPress={() => {
+            setSearchText("");
+            onCancel();
+          }}
+        >
+          <Text>Cancel</Text>
+        </CancelButton>
+      )}
     </Container>
   );
 };

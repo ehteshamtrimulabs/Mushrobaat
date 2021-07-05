@@ -1,4 +1,4 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { View, Modal } from "react-native";
 import { RootStackParamList } from "navigations/AppNavigator";
@@ -9,8 +9,6 @@ import IngredientItem from "components/IngredientItem";
 import LanguageBar from "components/LanguageBar";
 import Left from "assets/icons/Left";
 import Right from "assets/icons/Right";
-
-
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -95,14 +93,16 @@ const ModalToggleButton = styled.TouchableOpacity<{ color: string }>`
   border-radius: 50px;
   align-items: center;
   justify-content: center;
-  margin: 10px 20px 0px 20px;
+  margin-top: 10px;
+  margin-right: 20px;
+  margin-left: 20px;
+
   background-color: ${({ color }) => color};
 `;
 
 const ModalToggleButtonText = styled.Text<{ color: string }>`
   font-size: 18px;
   font-family: Montserrat;
-
   font-weight: 700;
   color: ${({ color }) => color};
 `;
@@ -183,6 +183,10 @@ const InstructionText = styled.Text`
   margin: 10px 20px 10px 0px;
 `;
 
+type Ingredient = { ingredient: string; id: string; measure: string };
+
+type Drink = { [key: string]: string };
+
 interface Props {}
 
 type DetailsScreenNavigationProp = StackNavigationProp<
@@ -195,24 +199,22 @@ const DetailsScreen = (props: Props) => {
   const navigation = useNavigation<DetailsScreenNavigationProp>();
   const { params } = useRoute<DetailsScreenRouteProp>();
 
-
   const [modalVisible, setModalVisible] = useState(false);
   const [index, setIndex] = useState(2);
   const [drink, setDrink] = useState({});
   const [loading, setLoading] = useState(false);
   const [instructions, setInstructions] = useState({});
-  const [ingredients, setIngredients] = useState([]);
+  const [ingredients, setIngredients] = useState<Array<Ingredient>>([]);
 
   useEffect(() => {
     fetchDrink();
   }, []);
 
-  const languages = ["it", "de", "en", "fr", "es"];
+  const languages = ["it", "de", "en"];
   var selectedLanguage = languages[index];
-  var ingredientlist: { ingredient: any; id: number; measure: any }[] = [];
+  var ingredientlist: Ingredient[] = [];
 
   const fetchDrink = async () => {
-
     setLoading(true);
     fetch(
       `https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=${params.drinkId}`
@@ -223,16 +225,20 @@ const DetailsScreen = (props: Props) => {
         changeIngredients(data.drinks[0]);
         changeInstructions(data.drinks[0]);
       })
+      .catch((e) => {
+        console.log("network error");
+        navigation.navigate("Offline");
+      })
       .finally(() => {
         setLoading(false);
       });
   };
 
-  const changeIngredients = (drink) => {
+  const changeIngredients = (drink: Drink) => {
     for (let i = 1; i < 15; i++) {
       let ingredient = {
         ingredient: drink[`strIngredient${i}`],
-        id: i,
+        id: i.toString(),
         measure: drink[`strMeasure${i}`],
       };
       ingredientlist.push(ingredient);
@@ -240,20 +246,20 @@ const DetailsScreen = (props: Props) => {
     setIngredients([...ingredientlist]);
   };
 
-  const changeLanguage = (lang) => {
-    
-    if(lang==='')
-    selectedLanguage = languages[index];
-    else{
-      setIndex(languages.findIndex((element)=>{
-        return (element===lang)
-      }))
-      changeLanguage('');
+  const changeLanguage = (lang: string) => {
+    if (lang === "") selectedLanguage = languages[index];
+    else {
+      setIndex(
+        languages.findIndex((element) => {
+          return element === lang;
+        })
+      );
+      changeLanguage("");
     }
   };
 
-  const changeInstructions = (drink) => {
-    let instr = { en: [], de: [], it: [],fr:[],es:[]};
+  const changeInstructions = (drink: Drink) => {
+    let instr = { en: [], de: [], it: [] };
     instr.en = drink.strInstructions.match(/[^\.!\?]+[\.!\?]+/g);
     instr.de = drink.strInstructionsDE.match(/[^\.!\?]+[\.!\?]+/g);
     instr.it = drink.strInstructionsIT.match(/[^\.!\?]+[\.!\?]+/g);
@@ -261,16 +267,16 @@ const DetailsScreen = (props: Props) => {
   };
 
   const goLeft = () => {
-    if (index === 0) setIndex(4);
+    if (index === 0) setIndex(2);
     else setIndex(index - 1);
-    changeLanguage('');
+    changeLanguage("");
   };
 
   const goRight = () => {
-    if (index === 4) setIndex(0);
+    if (index === 2) setIndex(0);
     else setIndex(index + 1);
 
-    changeLanguage('');
+    changeLanguage("");
   };
 
   return (
@@ -289,15 +295,12 @@ const DetailsScreen = (props: Props) => {
           <ModalBackground>
             <ModalContainer>
               <ModalHeadingText>Instructions</ModalHeadingText>
-              <ModalSubHeadingText>{
-                selectedLanguage==='en'&&'ENGLISH'}
-                {selectedLanguage==='es'&&'SPANISH'}
-                {selectedLanguage==='it'&&'ITALIAN'}
-                {selectedLanguage==='de'&&'GERMAN'}
-                {selectedLanguage==='fr'&&'FRENCH'}
-                
 
-                </ModalSubHeadingText>
+              <ModalSubHeadingText>
+                {selectedLanguage === "en" && "ENGLISH"}
+                {selectedLanguage === "it" && "ITALIAN"}
+                {selectedLanguage === "de" && "GERMAN"}
+              </ModalSubHeadingText>
               <InstructionsContainer>
                 <SideButtonContainer
                   onPress={() => {
@@ -307,21 +310,26 @@ const DetailsScreen = (props: Props) => {
                   <Left />
                 </SideButtonContainer>
                 <InstructionsList
-                  data={instructions.[selectedLanguage]}
-                  keyExtractor={(index)=>index.toString()}
-                  renderItem={({ item }) =>{
-                  return(
-                    <InstructionTextContainer>
-                      <InstructionText>{"\u2022"}</InstructionText>
-                      <InstructionText>{item}</InstructionText>
-                    </InstructionTextContainer>
-                  )}}
+                  data={instructions[selectedLanguage]}
+                  keyExtractor={(index) => index.toString()}
+                  renderItem={({ item }) => {
+                    return (
+                      <InstructionTextContainer>
+                        <InstructionText>{"\u2022"}</InstructionText>
+                        <InstructionText>{item}</InstructionText>
+                      </InstructionTextContainer>
+                    );
+                  }}
                 />
                 <SideButtonContainer onPress={() => goRight()}>
                   <Right />
                 </SideButtonContainer>
               </InstructionsContainer>
-              <LanguageBar selected={selectedLanguage} onChangeLanguage={(lang:string)=>changeLanguage(lang)}/>
+
+              <LanguageBar
+                selected={selectedLanguage}
+                onChangeLanguage={(lang: string) => changeLanguage(lang)}
+              />
               <ModalToggleButton
                 onPress={() => setModalVisible(false)}
                 color={"#F26C68"}
@@ -349,7 +357,9 @@ const DetailsScreen = (props: Props) => {
               <TitleText>{drink.strDrink}</TitleText>
               <ServedInHeading>Served in:</ServedInHeading>
               <SubtitleText>{drink.strGlass}</SubtitleText>
+
               <DrinkPicture source={{ uri: drink.strDrinkThumb }} />
+
               <IngredientsHeading>Ingredients</IngredientsHeading>
             </HeadingContainer>
           </Box>
@@ -358,7 +368,11 @@ const DetailsScreen = (props: Props) => {
               horizontal
               showsHorizontalScrollIndicator={false}
               data={ingredients}
-              renderItem={({ item }) => {
+              renderItem={({
+                item,
+              }: {
+                item: { ingredient: string; measure: string };
+              }) => {
                 if (item.ingredient === null) return null;
                 return (
                   <IngredientItem

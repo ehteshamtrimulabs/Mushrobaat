@@ -1,5 +1,4 @@
 import React from "react";
-import { ImageSourcePropType } from "react-native";
 import styled from "styled-components/native";
 
 const TouchableOpacity = styled.TouchableOpacity`
@@ -79,7 +78,7 @@ interface Props {
   title: string;
   subtitle: string;
   category: string;
-  image: ImageSourcePropType;
+  image: string;
 }
 
 const DrinkItem = ({ onPress, title, subtitle, category, image }: Props) => {

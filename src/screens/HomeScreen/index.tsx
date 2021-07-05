@@ -3,12 +3,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import Menu from "assets/icons/Menu";
 import CategoryItem from "components/CategoryItem";
 import DrinkItem from "components/DrinkItem";
+import NotFound from "components/NotFound";
 import ProfilePicture from "components/ProfilePicture";
 import SearchBar from "components/SearchBar";
 import SortModalListItem from "components/SortModalListItem";
 import { RootStackParamList } from "navigations/AppNavigator";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "react-native";
 import styled from "styled-components/native";
 
@@ -18,11 +18,9 @@ const Container = styled.SafeAreaView<{ color: string; opacity?: number }>`
   opacity: ${({ opacity }) => (opacity ? opacity : 1)};
 `;
 
-const TopContainer = styled.View`
-  height: 60%;
-`;
+const TopContainer = styled.View``;
+
 const Box = styled.View`
-  flex: 1;
   padding: 0px 20px;
 `;
 
@@ -69,8 +67,9 @@ const CategoriesView = styled.View`
 
 const CategoriesList = styled.FlatList``;
 
-const ListView = styled.FlatList`
+const ListView = styled.ScrollView`
   padding-top: 10px;
+  flex: 1;
 `;
 
 const MenuButton = styled.TouchableOpacity``;
@@ -118,15 +117,32 @@ const ModalOptionsListContainer = styled.View`
   flex: 1;
 `;
 
-const View = styled.View`
+const Padding = styled.View`
   padding: 10px;
+`;
+
+const ListFooterView = styled.View`
+  height: 50px;
+`;
+
+const LoadingView = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const LoadingText = styled.Text`
+  font-size: 18px;
+  font-family: Montserrat;
+  margin-top: 5px;
+  font-weight: 400;
 `;
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, "Home">;
 type HomeScreenRouteProp = RouteProp<RootStackParamList, "Home">;
 
 const HomeScreen = () => {
-  const { navigate } = useNavigation<HomeScreenNavigationProp>();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const { params } = useRoute<HomeScreenRouteProp>();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -157,8 +173,12 @@ const HomeScreen = () => {
     },
   ]);
   const [loading, setLoading] = useState(false);
+  const [searchDrinks, setSearchDrinks] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("Alcoholic");
 
   useEffect(() => {
+    console.log("fetching");
     fetchDrinks("Alcoholic");
   }, []);
 
@@ -169,40 +189,44 @@ const HomeScreen = () => {
     descending: false,
   });
 
-  const sortByLatest = () => {
-    setSortBy({
-      latest: true,
-      oldest: false,
-      ascending: false,
-      descending: false,
-    });
-  };
-
-  const sortByOldest = () => {
-    setSortBy({
-      latest: false,
-      oldest: true,
-      ascending: false,
-      descending: false,
-    });
-  };
-
-  const sortByAscending = () => {
-    setSortBy({
-      latest: false,
-      oldest: false,
-      ascending: true,
-      descending: false,
-    });
-  };
-
-  const sortByDescending = () => {
-    setSortBy({
+  const setSort = (sort: string) => {
+    var temp = {
       latest: false,
       oldest: false,
       ascending: false,
-      descending: true,
-    });
+      descending: false,
+    };
+    temp[sort] = true;
+
+    if (sort === "ascending") {
+      var sortedDrinks = drinks.sort((a, b) => {
+        var nameA = a.strDrink.toUpperCase();
+        var nameB = b.strDrink.toUpperCase();
+        if (nameA < nameB) {
+          return -1;
+        }
+        if (nameA > nameB) {
+          return 1;
+        }
+        return 0;
+      });
+      setDrinks(sortedDrinks);
+    } else if (sort === "descending") {
+      var sortedDrinks = drinks.sort((a, b) => {
+        var nameA = a.strDrink.toUpperCase(); // ignore upper and lowercase
+        var nameB = b.strDrink.toUpperCase(); // ignore upper and lowercase
+        if (nameA > nameB) {
+          return -1;
+        }
+        if (nameA < nameB) {
+          return 1;
+        }
+        return 0;
+      });
+      setDrinks(sortedDrinks);
+    }
+    setSortBy(temp);
+    setModalVisible(false);
   };
 
   const changeCategory = (cat: string) => {
@@ -215,25 +239,40 @@ const HomeScreen = () => {
     newArray[index] = { ...newArray[index], selected: true };
 
     setCategories([...newArray]);
+    setSelectedCategory(cat);
     fetchDrinks(newArray[index].categoryString);
   };
 
   const fetchSearchResults = (text: string) => {
-    setLoading(true);
-    fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${text}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setDrinks(data.drinks);
-      })
-      .finally(() => setLoading(false));
+    if (text.charAt(0) === "e") setHasSearched(false);
+    else {
+      setHasSearched(true);
+      setLoading(true);
+      fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${text}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.drinks) setSearchDrinks(data.drinks);
+          else setSearchDrinks([]);
+        })
+        .catch((e) => {
+          console.log("network error");
+          navigation.navigate("Offline");
+        })
+        .finally(() => setLoading(false));
+    }
   };
 
   const fetchDrinks = async (cat: string) => {
     setLoading(true);
+
     fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=${cat}`)
       .then((response) => response.json())
       .then((data) => {
         setDrinks(data.drinks);
+      })
+      .catch((e) => {
+        console.log("network error");
+        navigation.navigate("Offline");
       })
       .finally(() => setLoading(false));
   };
@@ -261,22 +300,22 @@ const HomeScreen = () => {
               <SortModalListItem
                 text="Latest"
                 checked={sortBy.latest}
-                onPress={sortByLatest}
+                onPress={() => setSort("latest")}
               />
               <SortModalListItem
                 text="Oldest"
                 checked={sortBy.oldest}
-                onPress={sortByOldest}
+                onPress={() => setSort("oldest")}
               />
               <SortModalListItem
                 text="Ascending"
                 checked={sortBy.ascending}
-                onPress={sortByAscending}
+                onPress={() => setSort("ascending")}
               />
               <SortModalListItem
                 text="Descending"
                 checked={sortBy.descending}
-                onPress={sortByDescending}
+                onPress={() => setSort("descending")}
               />
             </ModalOptionsListContainer>
           </ModalContainer>
@@ -286,7 +325,7 @@ const HomeScreen = () => {
       <TopContainer>
         <Box>
           <TopBar>
-            <TouchableOpacity onPress={() => navigate("Profile")}>
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
               <ProfilePicture image={require("assets/profile.png")} />
             </TouchableOpacity>
             <MenuButton onPress={() => setModalVisible(!modalVisible)}>
@@ -297,45 +336,79 @@ const HomeScreen = () => {
             <HeadingText1>Beverages</HeadingText1>
             <HeadingText2>Mushrobaat</HeadingText2>
           </Heading>
-          <SearchBar onSubmit={(text) => fetchSearchResults(text)} />
-          <CategoriesHeading>Categories</CategoriesHeading>
-        </Box>
-        <CategoriesView>
-          <CategoriesList
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            data={categories}
-            renderItem={({ item }) => (
-              <CategoryItem
-                category={item.category}
-                selected={item.selected}
-                image={item.image}
-                onPress={() => changeCategory(item.category)}
-              />
-            )}
-            ListFooterComponent={<View />}
+          <SearchBar
+            onSubmit={(text) => fetchSearchResults(text)}
+            onCancel={() => setHasSearched(false)}
           />
-        </CategoriesView>
-      </TopContainer>
-      {loading ? (
-        <View></View>
-      ) : (
-        <ListView
-          data={drinks}
-          disableVirtualization
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.idDrink}
-          ListFooterComponent={<View />}
-          renderItem={({ item }) => (
-            <DrinkItem
-              onPress={() => navigate("Details", { drinkId: item.idDrink })}
-              title={item.strDrink}
-              subtitle={"Collins Glass"}
-              category={"Alcoholic"}
-              image={`${item.strDrinkThumb}/preview`}
+          {!hasSearched && <CategoriesHeading>Categories</CategoriesHeading>}
+        </Box>
+        {!hasSearched && (
+          <CategoriesView>
+            <CategoriesList
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              data={categories}
+              renderItem={({ item }) => (
+                <CategoryItem
+                  category={item.category}
+                  selected={item.selected}
+                  image={item.image}
+                  onPress={() => changeCategory(item.category)}
+                />
+              )}
+              ListFooterComponent={<Padding />}
             />
-          )}
-        />
+          </CategoriesView>
+        )}
+      </TopContainer>
+      {!hasSearched ? (
+        loading ? (
+          <LoadingView>
+            <LoadingText>Loading</LoadingText>
+          </LoadingView>
+        ) : (
+          <ListView showsVerticalScrollIndicator={false}>
+            {drinks.map((item) => {
+              return (
+                <DrinkItem
+                  key={item.idDrink}
+                  onPress={() =>
+                    navigation.navigate("Details", { drinkId: item.idDrink })
+                  }
+                  title={item.strDrink}
+                  subtitle={"Collins Glass"}
+                  category={selectedCategory}
+                  image={`${item.strDrinkThumb}/preview`}
+                />
+              );
+            })}
+            <ListFooterView />
+          </ListView>
+        )
+      ) : loading ? (
+        <LoadingView>
+          <LoadingText>Searching ...</LoadingText>
+        </LoadingView>
+      ) : searchDrinks.length === 0 ? (
+        <NotFound />
+      ) : (
+        <ListView showsVerticalScrollIndicator={false}>
+          {searchDrinks.map((item) => {
+            return (
+              <DrinkItem
+                key={item.idDrink}
+                onPress={() =>
+                  navigation.navigate("Details", { drinkId: item.idDrink })
+                }
+                title={item.strDrink}
+                subtitle={"Collins Glass"}
+                category={selectedCategory}
+                image={`${item.strDrinkThumb}/preview`}
+              />
+            );
+          })}
+          <ListFooterView />
+        </ListView>
       )}
     </Container>
   );

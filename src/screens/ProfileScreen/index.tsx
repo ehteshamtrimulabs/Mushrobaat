@@ -85,7 +85,7 @@ const Button = styled.TouchableOpacity<{ color: string }>`
   border-radius: 50px;
   align-items: center;
   justify-content: center;
-  margin: 20px 0px 0px 0px;
+  margin-top: 20px;
   background-color: ${({ color }) => color};
 `;
 
@@ -120,6 +120,7 @@ const ProfileScreen = (props: Props) => {
               <Edit />
             </EditButtonContainer>
           </HeadingContainer>
+
           <Picture source={require("assets/profile.png")} />
           <DetailsView>
             <DetailItem>

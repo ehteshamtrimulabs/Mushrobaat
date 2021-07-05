@@ -1,9 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import Italy from "assets/flags/Italy";
-import Spain from "assets/flags/Spain";
 import Germany from "assets/flags/Germany";
-import France from "assets/flags/France";
 import UnitedKindom from "assets/flags/UnitedKingdom";
 
 const Container = styled.View`
@@ -14,7 +12,7 @@ const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
 interface Props {
@@ -48,14 +46,6 @@ const LanguageBar = ({ selected, onChangeLanguage }: Props) => {
       <UnitedKindom
         {...(selected === "en" ? selectedProps : unSelectedProps)}
         onPress={() => onChangeLanguage("en")}
-      />
-      <France
-        {...(selected === "fr" ? selectedProps : unSelectedProps)}
-        onPress={() => onChangeLanguage("fr")}
-      />
-      <Spain
-        {...(selected === "es" ? selectedProps : unSelectedProps)}
-        onPress={() => onChangeLanguage("es")}
       />
     </Container>
   );
