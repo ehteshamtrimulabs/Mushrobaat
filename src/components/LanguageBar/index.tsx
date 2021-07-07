@@ -1,14 +1,8 @@
 import React from "react";
 import styled from "styled-components/native";
 import Italy from "assets/flags/Italy";
-import Spain from "assets/flags/Spain";
 import Germany from "assets/flags/Germany";
-import France from "assets/flags/France";
 import UnitedKindom from "assets/flags/UnitedKingdom";
-
-interface Props {
-  selected: string;
-}
 
 const Container = styled.View`
   width: 100%;
@@ -18,10 +12,15 @@ const Container = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
-const LanguageBar = ({ selected }: Props) => {
+interface Props {
+  selected: string;
+  onChangeLanguage: (text: string) => void;
+}
+
+const LanguageBar = ({ selected, onChangeLanguage }: Props) => {
   const selectedProps = {
     width: 40,
     height: 40,
@@ -36,15 +35,18 @@ const LanguageBar = ({ selected }: Props) => {
 
   return (
     <Container>
-      <Italy {...(selected === "Italy" ? selectedProps : unSelectedProps)} />
+      <Italy
+        {...(selected === "it" ? selectedProps : unSelectedProps)}
+        onPress={() => onChangeLanguage("it")}
+      />
       <Germany
-        {...(selected === "Germany" ? selectedProps : unSelectedProps)}
+        {...(selected === "de" ? selectedProps : unSelectedProps)}
+        onPress={() => onChangeLanguage("de")}
       />
       <UnitedKindom
-        {...(selected === "UnitedKingdom" ? selectedProps : unSelectedProps)}
+        {...(selected === "en" ? selectedProps : unSelectedProps)}
+        onPress={() => onChangeLanguage("en")}
       />
-      <France {...(selected === "France" ? selectedProps : unSelectedProps)} />
-      <Spain {...(selected === "Spain" ? selectedProps : unSelectedProps)} />
     </Container>
   );
 };

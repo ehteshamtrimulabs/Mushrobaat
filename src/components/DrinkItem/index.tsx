@@ -1,5 +1,4 @@
 import React from "react";
-import { ImageSourcePropType } from "react-native";
 import styled from "styled-components/native";
 
 const TouchableOpacity = styled.TouchableOpacity`
@@ -24,7 +23,9 @@ const InfoContainer = styled.View`
 const TextContainer = styled.View`
   width: 125px;
   margin-left: 20px;
-  margin-top: 30px;
+  margin-top: 20px;
+  padding-top: 10px;
+  justify-content: space-between;
 `;
 
 const TitleText = styled.Text`
@@ -32,15 +33,15 @@ const TitleText = styled.Text`
   font-size: 14px;
   font-weight: 600;
   font-family: Montserrat;
+  max-height: 70px;
 `;
 
 const SubtitleText = styled.Text`
   font-size: 14px;
   font-family: Montserrat;
-  margin-top: 10px;
-
   font-weight: 500;
   color: #a59c9c;
+  margin-top: 10px;
 `;
 
 const CategoryBackground = styled.View<{ color: string }>`
@@ -77,7 +78,7 @@ interface Props {
   title: string;
   subtitle: string;
   category: string;
-  image: ImageSourcePropType;
+  image: string;
 }
 
 const DrinkItem = ({ onPress, title, subtitle, category, image }: Props) => {

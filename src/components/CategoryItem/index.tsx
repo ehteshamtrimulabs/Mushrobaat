@@ -13,7 +13,7 @@ const Container = styled.TouchableOpacity<{ color: string }>`
   margin-bottom: 20px;
   box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.1);
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `;
 
 const Image = styled.Image`
@@ -37,6 +37,7 @@ const Icon = styled.View<{ color: string }>`
   width: 26px;
   height: 26px;
   margin-top: 10px;
+  margin-bottom: 10px;
   border-radius: 20px;
   background-color: ${({ color }) => color};
   align-items: center;
@@ -47,11 +48,12 @@ interface Props {
   image: ImageSourcePropType;
   category: string;
   selected: boolean;
+  onPress: () => void;
 }
 
-const CategoryItem = ({ image, category, selected }: Props) => {
+const CategoryItem = ({ image, category, selected, onPress }: Props) => {
   return (
-    <Container color={selected ? "#F5CA48" : "white"}>
+    <Container onPress={() => onPress()} color={selected ? "#F5CA48" : "white"}>
       <Image source={image} />
       <Title>{category}</Title>
       <Icon color={selected ? "white" : "#f26c68"}>
