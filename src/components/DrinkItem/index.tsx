@@ -30,11 +30,15 @@ const TextContainer = styled.View`
 const TitleText = styled.Text`
   color: black;
   font-size: 14px;
-  font-weight: 600; ;
+  font-weight: 600;
+  font-family: Montserrat;
 `;
 
 const SubtitleText = styled.Text`
   font-size: 14px;
+  font-family: Montserrat;
+  margin-top: 10px;
+
   font-weight: 500;
   color: #a59c9c;
 `;
@@ -52,6 +56,8 @@ const CategoryBackground = styled.View<{ color: string }>`
 
 const CategoryText = styled.Text`
   font-size: 12px;
+  font-family: Montserrat;
+
   font-weight: 600;
   color: black;
 `;
@@ -90,7 +96,7 @@ const DrinkItem = ({ onPress, title, subtitle, category, image }: Props) => {
           </CategoryBackground>
         </InfoContainer>
         <ImageContainer>
-          <DrinkImage source={image} />
+          <DrinkImage source={{ uri: image }} />
         </ImageContainer>
       </Container>
     </TouchableOpacity>

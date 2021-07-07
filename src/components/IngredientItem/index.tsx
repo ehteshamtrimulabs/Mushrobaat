@@ -11,6 +11,8 @@ const Image = styled.Image`
 
 const Title = styled.Text`
   font-size: 14px;
+  font-family: Montserrat;
+
   font-weight: 500;
   color: black;
   align-self: center;
@@ -18,6 +20,8 @@ const Title = styled.Text`
 
 const Subtitle = styled.Text`
   font-size: 10px;
+  font-family: Montserrat;
+
   font-weight: 500;
   color: #a59c9c;
   align-self: center;

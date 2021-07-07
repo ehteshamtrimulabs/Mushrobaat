@@ -12,10 +12,13 @@ import Right from "assets/icons/Right";
 
 const Container = styled.SafeAreaView`
   flex: 1;
-  margin-top: 20px;
 `;
-const Content = styled.ScrollView`
+
+const Content = styled.ScrollView<{ color: string; opacity?: number }>`
+  padding-top: 10px;
   flex: 1;
+  background-color: ${({ color }) => color};
+  opacity: ${({ opacity }) => (opacity ? opacity : 1)};
 `;
 
 const Box = styled.View`
@@ -28,6 +31,8 @@ const HeadingContainer = styled.View`
 
 const TitleText = styled.Text`
   font-size: 32px;
+  font-family: Montserrat;
+
   margin-top: 5px;
   font-weight: 700;
   min-height: 70px;
@@ -35,6 +40,8 @@ const TitleText = styled.Text`
 
 const ServedInHeading = styled.Text`
   font-size: 14px;
+  font-family: Montserrat;
+
   margin-top: 10px;
   color: #a59c9c;
 `;
@@ -42,6 +49,8 @@ const ServedInHeading = styled.Text`
 const SubtitleText = styled.Text`
   font-size: 24px;
   color: #e4723c;
+  font-family: Montserrat;
+
   font-weight: 600;
   margin-top: 10px;
 `;
@@ -68,6 +77,8 @@ const DrinkPicture = styled.Image`
 const IngredientsHeading = styled.Text`
   margin-top: 16px;
   font-size: 16px;
+  font-family: Montserrat;
+
   font-weight: bold;
   color: black;
 `;
@@ -79,9 +90,7 @@ const IngredientsContainer = styled.View`
 
 const CategoriesList = styled.FlatList``;
 
-const ModalToggleButton = styled.TouchableOpacity<{
-  color: string;
-}>`
+const ModalToggleButton = styled.TouchableOpacity<{ color: string }>`
   height: 60px;
   border-radius: 50px;
   align-items: center;
@@ -91,10 +100,12 @@ const ModalToggleButton = styled.TouchableOpacity<{
   background-color: ${({ color }) => color};
 `;
 
-const ModalToggleButtonText = styled.Text`
+const ModalToggleButtonText = styled.Text<{ color: string }>`
   font-size: 18px;
+  font-family: Montserrat;
+
   font-weight: 700;
-  color: black;
+  color: ${({ color }) => color};
 `;
 
 const ModalSafeArea = styled.SafeAreaView`
@@ -107,7 +118,7 @@ const InactiveArea = styled.TouchableOpacity`
 
 const ModalBackground = styled.View`
   flex: 2.3;
-  padding: 0px 20px;
+  margin: 0px 20px;
 `;
 
 const ModalContainer = styled.View`
@@ -121,6 +132,8 @@ const ModalContainer = styled.View`
 
 const ModalHeadingText = styled.Text`
   font-size: 32px;
+  font-family: Montserrat;
+
   font-weight: 700;
   color: black;
   align-self: center;
@@ -129,6 +142,8 @@ const ModalHeadingText = styled.Text`
 
 const ModalSubHeadingText = styled.Text`
   font-size: 16px;
+  font-family: Montserrat;
+
   font-weight: 600;
   color: #a59c9c;
   align-self: center;
@@ -138,15 +153,11 @@ const InstructionsContainer = styled.View`
   flex-direction: row;
 `;
 
-const LeftContainer = styled.View`
+const SideButtonContainer = styled.TouchableOpacity`
   flex: 1;
   align-items: center;
   justify-content: center;
-`;
-const RightContainer = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
+  margin: 100px 0px;
 `;
 
 const InstructionsList = styled.FlatList`
@@ -166,6 +177,8 @@ const InstructionTextContainer = styled.View`
 
 const InstructionText = styled.Text`
   font-size: 18px;
+  font-family: Montserrat;
+
   font-weight: 400;
   color: black;
   margin: 10px 20px 10px 0px;
@@ -183,32 +196,32 @@ const DetailsScreen = (props: Props) => {
   const navigation = useNavigation<DetailsScreenNavigationProp>();
   const { params } = useRoute<DetailsScreenRouteProp>();
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const languages = [
-    "Italy",
-    "Germany",
-    "UnitedKingdom",
-    "France",
-    "Spain",
-    "China",
-  ];
+  const languages = ["Italy", "Germany", "UnitedKingdom", "France", "Spain"];
 
+  const [modalVisible, setModalVisible] = useState(false);
   const [index, setIndex] = useState(2);
-  const [selectedLanguage, setSelectedLanguage] = useState(languages[2]);
+  var selectedLanguage = languages[index];
+  const [drink, setDrink] = useState({
+    strGlass: "Collins Glass",
+    strDrink: "3 Wise Men",
+    strDrinkThumb:
+      "https://www.thecocktaildb.com/images/media/drink/wxqpyw1468877677.jpg",
+  });
 
   const changeLanguage = () => {
-    setSelectedLanguage(languages[index]);
+    selectedLanguage = languages[index];
   };
 
   const goLeft = () => {
-    if (index === 0) setIndex(5);
+    if (index === 0) setIndex(4);
     else setIndex(index - 1);
     changeLanguage();
   };
 
   const goRight = () => {
-    if (index === 5) setIndex(0);
+    if (index === 4) setIndex(0);
     else setIndex(index + 1);
+
     changeLanguage();
   };
 
@@ -266,13 +279,13 @@ const DetailsScreen = (props: Props) => {
               <ModalHeadingText>Instructions</ModalHeadingText>
               <ModalSubHeadingText>(ENGLISH)</ModalSubHeadingText>
               <InstructionsContainer>
-                <LeftContainer>
-                  <Left
-                    onPress={() => {
-                      goLeft();
-                    }}
-                  />
-                </LeftContainer>
+                <SideButtonContainer
+                  onPress={() => {
+                    goLeft();
+                  }}
+                >
+                  <Left />
+                </SideButtonContainer>
                 <InstructionsList
                   data={instructions}
                   renderItem={({ item }) => (
@@ -282,35 +295,37 @@ const DetailsScreen = (props: Props) => {
                     </InstructionTextContainer>
                   )}
                 />
-                <RightContainer>
-                  <Right onPress={() => goRight()} />
-                </RightContainer>
+                <SideButtonContainer onPress={() => goRight()}>
+                  <Right />
+                </SideButtonContainer>
               </InstructionsContainer>
-              <LanguageBar
-                selected={selectedLanguage}
-                onPress={(language) => setSelectedLanguage(language)}
-              />
+              <LanguageBar selected={selectedLanguage} />
               <ModalToggleButton
                 onPress={() => setModalVisible(false)}
                 color={"#F26C68"}
               >
-                <ModalToggleButtonText>CHEERS!</ModalToggleButtonText>
+                <ModalToggleButtonText color="white">
+                  CHEERS!
+                </ModalToggleButtonText>
               </ModalToggleButton>
             </ModalContainer>
           </ModalBackground>
         </ModalSafeArea>
       </Modal>
 
-      <Content>
+      <Content
+        opacity={modalVisible ? 0.7 : 1}
+        color={modalVisible ? "rgba(0,0,0,0.5)" : "#F9F9FB"}
+      >
         <Box>
           <BackButton onPress={() => navigation.goBack()}>
             <Back />
           </BackButton>
           <HeadingContainer>
-            <TitleText>3-Mile Long Island Iced Tea</TitleText>
+            <TitleText>{drink.strDrink}</TitleText>
             <ServedInHeading>Served in:</ServedInHeading>
-            <SubtitleText>Collins Glass</SubtitleText>
-            <DrinkPicture source={require("assets/drink.png")} />
+            <SubtitleText>{drink.strGlass}</SubtitleText>
+            <DrinkPicture source={{ uri: drink.strDrinkThumb }} />
             <IngredientsHeading>Ingredients</IngredientsHeading>
           </HeadingContainer>
         </Box>
@@ -334,7 +349,9 @@ const DetailsScreen = (props: Props) => {
           onPress={() => setModalVisible(true)}
           color={"#f5ca48"}
         >
-          <ModalToggleButtonText>See Instructions</ModalToggleButtonText>
+          <ModalToggleButtonText color="black">
+            See Instructions
+          </ModalToggleButtonText>
         </ModalToggleButton>
       </Content>
     </Container>

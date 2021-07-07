@@ -20,6 +20,7 @@ const Text = styled.Text`
   font-weight: 500;
   font-size: 16px;
   color: black;
+  font-family: Montserrat;
 `;
 
 const SortModalListItem = ({ text, onPress, checked }: Props) => (

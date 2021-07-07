@@ -24,11 +24,13 @@ const Image = styled.Image`
 
 const Title = styled.Text`
   font-size: 14px;
+  font-family: Montserrat;
   font-weight: 600;
   color: #313234;
   width: 80px;
   margin-top: 10px;
   text-align: center;
+  max-height: 50px;
 `;
 
 const Icon = styled.View<{ color: string }>`
@@ -44,14 +46,15 @@ const Icon = styled.View<{ color: string }>`
 interface Props {
   image: ImageSourcePropType;
   category: string;
+  selected: boolean;
 }
 
-const CategoryItem = ({ image, category }: Props) => {
+const CategoryItem = ({ image, category, selected }: Props) => {
   return (
-    <Container color={category === "Ordinary Drink" ? "#F5CA48" : "white"}>
+    <Container color={selected ? "#F5CA48" : "white"}>
       <Image source={image} />
       <Title>{category}</Title>
-      <Icon color={category === "Ordinary Drink" ? "white" : "#f26c68"}>
+      <Icon color={selected ? "white" : "#f26c68"}>
         <Next />
       </Icon>
     </Container>
