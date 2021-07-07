@@ -56,12 +56,6 @@ type OfflineScreenNavigationProp = StackNavigationProp<
 const OfflineScreen = (props: Props) => {
   const navigation = useNavigation<OfflineScreenNavigationProp>();
 
-  //-----disable back button/gesture----
-  //   navigation.reset({
-  //     index: 0,
-  //     routes: [{ name: "Offline" }],
-  //   });
-
   return (
     <Container>
       <Wifi />

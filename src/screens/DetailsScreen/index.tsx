@@ -206,13 +206,13 @@ const DetailsScreen = (props: Props) => {
   const [instructions, setInstructions] = useState({});
   const [ingredients, setIngredients] = useState<Array<Ingredient>>([]);
 
-  useEffect(() => {
-    fetchDrink();
-  }, []);
-
   const languages = ["it", "de", "en"];
   var selectedLanguage = languages[index];
   var ingredientlist: Ingredient[] = [];
+
+  useEffect(() => {
+    fetchDrink();
+  }, []);
 
   const fetchDrink = async () => {
     setLoading(true);
@@ -266,17 +266,17 @@ const DetailsScreen = (props: Props) => {
     setInstructions({ ...instr });
   };
 
-  const goLeft = () => {
-    if (index === 0) setIndex(2);
-    else setIndex(index - 1);
-    changeLanguage("");
-  };
+  const move = (direction: string) => {
+    if (direction === "L") {
+      if (index === 0) setIndex(2);
+      else setIndex(index - 1);
+      changeLanguage("");
+    } else {
+      if (index === 2) setIndex(0);
+      else setIndex(index + 1);
 
-  const goRight = () => {
-    if (index === 2) setIndex(0);
-    else setIndex(index + 1);
-
-    changeLanguage("");
+      changeLanguage("");
+    }
   };
 
   return (
@@ -304,7 +304,7 @@ const DetailsScreen = (props: Props) => {
               <InstructionsContainer>
                 <SideButtonContainer
                   onPress={() => {
-                    goLeft();
+                    move("L");
                   }}
                 >
                   <Left />
@@ -321,7 +321,7 @@ const DetailsScreen = (props: Props) => {
                     );
                   }}
                 />
-                <SideButtonContainer onPress={() => goRight()}>
+                <SideButtonContainer onPress={() => move("R")}>
                   <Right />
                 </SideButtonContainer>
               </InstructionsContainer>
